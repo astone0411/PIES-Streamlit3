@@ -29,6 +29,30 @@ def seed_default_users(session):
             password_hash=hash_password("tech123"),
             role="technician",
         ),
+        User(
+            username="amy",
+            display_name="Amy",
+            password_hash=hash_password("tech123"),
+            role="technician",
+        ),
+        User(
+            username="jessa",
+            display_name="Jessa",
+            password_hash=hash_password("admin123"),
+            role="supervisor",
+        ),
+        User(
+            username="trista",
+            display_name="Trista",
+            password_hash=hash_password("admin123"),
+            role="supervisor",
+        ),
+        User(
+            username="joseph",
+            display_name="Joseph",
+            password_hash=hash_password("tech123"),
+            role="technician",
+        )
     ]
 
     for user in defaults:
