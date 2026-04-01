@@ -144,10 +144,20 @@ class AuditLog(Base):
 # ---------------------------------------------------------------------------
 
 def get_engine(db_url: str | None = None):
-    url = db_url or os.environ.get("DATABASE_URL", "sqlite:///lims.db")
-    # SQLite needs check_same_thread=False for Streamlit
-    connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {}
-    return create_engine(url, connect_args=connect_args)
+    if db_url is None:
+        # Try Streamlit secrets first, then env var, then local SQLite fallback
+        try:
+            import streamlit as st
+            db_url = st.secrets["DATABASE_URL"]
+        except Exception:
+            db_url = os.environ.get("DATABASE_URL", "sqlite:///lims.db")
+
+    # SQLAlchemy requires postgresql://, not postgres://
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+    connect_args = {"check_same_thread": False} if db_url.startswith("sqlite") else {}
+    return create_engine(db_url, connect_args=connect_args)
 
 
 def init_db(engine=None):
